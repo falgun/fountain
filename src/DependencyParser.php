@@ -22,7 +22,7 @@ class DependencyParser
 
         //is it instatiable ?
         if ($reflector->isInstantiable() === false) {
-            throw new Exception($class . ' Cant be instatiate !');
+            throw new \Exception($class . ' Cant be instatiate !');
         }
 
         //check constructor
