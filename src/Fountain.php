@@ -22,6 +22,11 @@ class Fountain implements ContainerInterface
         $this->parser = new DependencyParser($container);
     }
 
+    /**
+     * @template T
+     * @psalm-param class-string<T> $id
+     * @return T
+     */
     public function get(string $id)
     {
         if ($this->container->has($id)) {
@@ -35,11 +40,21 @@ class Fountain implements ContainerInterface
         return $object;
     }
 
+    /**
+     * @param class-string $id
+     * @return bool
+     */
     public function has(string $id): bool
     {
         return $this->container->has($id);
     }
 
+    /**
+     * @template T
+     * @psalm-param class-string<T> $id
+     * @psalm-param T $object
+     * @return void
+     */
     public function set(string $id, $object): void
     {
         $this->container->set($id, $object);

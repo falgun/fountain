@@ -16,6 +16,11 @@ class DependencyParser
         $this->shared = $shared;
     }
 
+    /**
+     * @template T
+     * @param class-string<T> $class
+     * @return T
+     */
     public function resolve(string $class)
     {
         $reflector = new ReflectionClass($class);
@@ -43,7 +48,11 @@ class DependencyParser
         return $classInstance;
     }
 
-    protected function getDependencies(array $parameters)
+    /**
+     * @param array<int, ReflectionParameter> $parameters
+     * @return array<int, object>
+     */
+    protected function getDependencies(array $parameters): array
     {
         $dependencies = [];
 
@@ -58,6 +67,10 @@ class DependencyParser
         return $dependencies;
     }
 
+    /**
+     * @param ReflectionParameter $parameter
+     * @return object
+     */
     protected function prepareDependency(ReflectionParameter $parameter)
     {
         $dependency = $parameter->getClass();
@@ -75,6 +88,11 @@ class DependencyParser
         return $this->resolve($name);
     }
 
+    /**
+     * @param ReflectionParameter $parameter
+     * @return mixed
+     * @throws \Exception
+     */
     protected function getDefaultValue(ReflectionParameter $parameter)
     {
         if ($parameter->isDefaultValueAvailable()) {
