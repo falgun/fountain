@@ -6,12 +6,12 @@ namespace Falgun\Fountain;
 use ReflectionClass;
 use ReflectionParameter;
 
-class DependencyParser
+final class DependencyParser
 {
 
-    protected SharedServices $shared;
+    private SharedContainerInterface $shared;
 
-    public function __construct(SharedServices $shared)
+    public function __construct(SharedContainerInterface $shared)
     {
         $this->shared = $shared;
     }
@@ -52,7 +52,7 @@ class DependencyParser
      * @param array<int, ReflectionParameter> $parameters
      * @return array<int, object>
      */
-    protected function getDependencies(array $parameters): array
+    private function getDependencies(array $parameters): array
     {
         $dependencies = [];
 
@@ -71,7 +71,7 @@ class DependencyParser
      * @param ReflectionParameter $parameter
      * @return object
      */
-    protected function prepareDependency(ReflectionParameter $parameter)
+    private function prepareDependency(ReflectionParameter $parameter)
     {
         $dependency = $parameter->getClass();
 
@@ -91,15 +91,15 @@ class DependencyParser
     /**
      * @param ReflectionParameter $parameter
      * @return mixed
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
-    protected function getDefaultValue(ReflectionParameter $parameter)
+    private function getDefaultValue(ReflectionParameter $parameter)
     {
         if ($parameter->isDefaultValueAvailable()) {
             return $parameter->getDefaultValue();
         }
 
         //return null;
-        throw new \Exception('No default value for ' . $parameter->getName() . ' found !');
+        throw new \InvalidArgumentException('No default value for ' . $parameter->getName() . ' found !');
     }
 }

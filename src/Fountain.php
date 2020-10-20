@@ -10,27 +10,27 @@ namespace Falgun\Fountain;
  * shared: is flag for singleton classes
  * implementations: is an array of implementations of a interface
  */
-class Fountain implements ContainerInterface
+final class Fountain implements ContainerInterface
 {
 
-    protected SharedServices $container;
-    protected DependencyParser $parser;
+    private SharedContainerInterface $shared;
+    private DependencyParser $parser;
 
-    public function __construct(SharedServices $container)
+    public function __construct(SharedContainerInterface $shared)
     {
-        $this->container = $container;
-        $this->parser = new DependencyParser($container);
+        $this->shared = $shared;
+        $this->parser = new DependencyParser($shared);
     }
 
     /**
      * @template T
-     * @psalm-param class-string<T> $id
+     * @param class-string<T> $id
      * @return T
      */
     public function get(string $id)
     {
-        if ($this->container->has($id)) {
-            return $this->container->get($id);
+        if ($this->shared->has($id)) {
+            return $this->shared->get($id);
         }
 
         $object = $this->parser->resolve($id);
@@ -46,17 +46,17 @@ class Fountain implements ContainerInterface
      */
     public function has(string $id): bool
     {
-        return $this->container->has($id);
+        return $this->shared->has($id);
     }
 
     /**
      * @template T
-     * @psalm-param class-string<T> $id
-     * @psalm-param T $object
+     * @param class-string<T> $id
+     * @param T $object
      * @return void
      */
     public function set(string $id, $object): void
     {
-        $this->container->set($id, $object);
+        $this->shared->set($id, $object);
     }
 }

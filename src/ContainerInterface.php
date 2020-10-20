@@ -7,7 +7,7 @@ interface ContainerInterface
 
     /**
      * @template T
-     * @psalm-param class-string<T> $id
+     * @param class-string<T> $id
      * @return T
      */
     public function get(string $id);
@@ -20,8 +20,8 @@ interface ContainerInterface
 
     /**
      * @template T
-     * @psalm-param class-string<T> $id
-     * @psalm-param T $object
+     * @param class-string<T> $id
+     * @param T $object
      * @return void
      */
     public function set(string $id, $object): void;
