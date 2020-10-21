@@ -20,6 +20,7 @@ final class DependencyParser
      * @template T
      * @param class-string<T> $class
      * @return T
+     * @throws \InvalidArgumentException
      */
     public function resolve(string $class)
     {
@@ -27,7 +28,7 @@ final class DependencyParser
 
         //is it instatiable ?
         if ($reflector->isInstantiable() === false) {
-            throw new \Exception($class . ' Cant be instatiate !');
+            throw new \InvalidArgumentException('Cannot instantiate ' . $class);
         }
 
         //check constructor
@@ -54,11 +55,11 @@ final class DependencyParser
      */
     private function getDependencies(array $parameters): array
     {
-        $dependencies = [];
-
         if (empty($parameters)) {
             return [];
         }
+
+        $dependencies = [];
 
         foreach ($parameters as $parameter) {
             $dependencies[] = $this->prepareDependency($parameter);

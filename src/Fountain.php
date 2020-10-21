@@ -16,10 +16,10 @@ final class Fountain implements ContainerInterface
     private SharedContainerInterface $shared;
     private DependencyParser $parser;
 
-    public function __construct(SharedContainerInterface $shared)
+    public function __construct(SharedContainerInterface $shared = null)
     {
-        $this->shared = $shared;
-        $this->parser = new DependencyParser($shared);
+        $this->shared = $shared ?? new SharedContainer();
+        $this->parser = new DependencyParser($this->shared);
     }
 
     /**
@@ -33,11 +33,7 @@ final class Fountain implements ContainerInterface
             return $this->shared->get($id);
         }
 
-        $object = $this->parser->resolve($id);
-
-        $this->set($id, $object);
-
-        return $object;
+        return $this->parser->resolve($id);
     }
 
     /**

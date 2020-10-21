@@ -1,101 +1,93 @@
 <?php
 declare(strict_types=1);
 
-namespace {
+namespace Falgun\Fountain\Tests;
 
-    class StubDefaultScalar
+use Falgun\Fountain\Fountain;
+use PHPUnit\Framework\TestCase;
+use Falgun\Fountain\SharedContainer;
+
+final class DefaultScalarTest extends TestCase
+{
+
+    public function testDefaultScalar()
     {
+        $fountain = new Fountain();
 
-        public array $values;
+        $abc = $fountain->get(StubDefaultScalar::class);
 
-        public function __construct(
-            string $str = 'default',
-            $str2 = '',
-            int $number = 1,
-            $number2 = 2,
-            float $decimal = 1.2,
-            $decimal2 = 2.3,
-            array $multi = ['a'],
-            $multi2 = ['a', 'b'],
-            bool $isTrue = true,
-            $isFalse = false
-        )
-        {
-            $this->values = [
-                'str' => $str,
-                'str2' => $str2,
-                'number' => $number,
-                'number2' => $number2,
-                'decimal' => $decimal,
-                'decimal2' => $decimal2,
-                'multi' => $multi,
-                'multi2' => $multi2,
-                'isTrue' => $isTrue,
-                'isFalse' => $isFalse,
-            ];
-        }
+        $this->assertSame([
+            'str' => 'default',
+            'str2' => '',
+            'number' => 1,
+            'number2' => 2,
+            'decimal' => 1.2,
+            'decimal2' => 2.3,
+            'multi' => [
+                0 => 'a',
+            ],
+            'multi2' => [
+                0 => 'a',
+                1 => 'b',
+            ],
+            'isTrue' => true,
+            'isFalse' => false,
+            ],
+            $abc->values);
     }
 
-    class StubNoDefault
+    public function testNoDefaultScalar()
     {
+        $fountain = new Fountain();
 
-        public function __construct(string $noDefault)
-        {
-            
+        try {
+            $fountain->get(StubNoDefault::class);
+            $this->fail();
+        } catch (\InvalidArgumentException $ex) {
+            $this->assertSame('No default value for noDefault found !', $ex->getMessage());
+            $this->assertSame(0, $ex->getCode());
         }
     }
-
 }
 
-namespace Falgun\Fountain\Tests {
+class StubDefaultScalar
+{
 
-    use Falgun\Fountain\Fountain;
-    use PHPUnit\Framework\TestCase;
-    use Falgun\Fountain\SharedContainer;
+    public array $values;
 
-    final class DefaultScalarTest extends TestCase
+    public function __construct(
+        string $str = 'default',
+        $str2 = '',
+        int $number = 1,
+        $number2 = 2,
+        float $decimal = 1.2,
+        $decimal2 = 2.3,
+        array $multi = ['a'],
+        $multi2 = ['a', 'b'],
+        bool $isTrue = true,
+        $isFalse = false
+    )
     {
-
-        public function testDefaultScalar()
-        {
-            $shared = new SharedContainer();
-            $fountain = new Fountain($shared);
-
-            $abc = $fountain->get(\StubDefaultScalar::class);
-
-            $this->assertSame([
-                'str' => 'default',
-                'str2' => '',
-                'number' => 1,
-                'number2' => 2,
-                'decimal' => 1.2,
-                'decimal2' => 2.3,
-                'multi' => [
-                    0 => 'a',
-                ],
-                'multi2' => [
-                    0 => 'a',
-                    1 => 'b',
-                ],
-                'isTrue' => true,
-                'isFalse' => false,
-                ],
-                $abc->values);
-        }
-
-        public function testNoDefaultScalar()
-        {
-            $shared = new SharedContainer();
-            $fountain = new Fountain($shared);
-
-            try {
-                $fountain->get(\StubNoDefault::class);
-                $this->fail();
-            } catch (\InvalidArgumentException $ex) {
-                $this->assertSame('No default value for noDefault found !', $ex->getMessage());
-                $this->assertSame(0, $ex->getCode());
-            }
-        }
+        $this->values = [
+            'str' => $str,
+            'str2' => $str2,
+            'number' => $number,
+            'number2' => $number2,
+            'decimal' => $decimal,
+            'decimal2' => $decimal2,
+            'multi' => $multi,
+            'multi2' => $multi2,
+            'isTrue' => $isTrue,
+            'isFalse' => $isFalse,
+        ];
     }
+}
 
+class StubNoDefault
+{
+
+    public function __construct(string $noDefault)
+    {
+        
+    }
 }
