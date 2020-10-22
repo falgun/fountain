@@ -8,7 +8,7 @@ use Falgun\Fountain\Fountain;
 use PHPUnit\Framework\TestCase;
 use Falgun\Fountain\SharedContainer;
 
-final class RuleBookTest extends TestCase
+final class SharedRuleBookTest extends TestCase
 {
 
     public function testNonSharedRule()

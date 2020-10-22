@@ -26,6 +26,10 @@ final class DependencyParser
      */
     public function resolve(string $class)
     {
+        if ($this->ruleBook->hasImplementation($class)) {
+            $class = $this->ruleBook->getImplementation($class);
+        }
+
         if ($this->shared->has($class)) {
             return $this->shared->get($class);
         }

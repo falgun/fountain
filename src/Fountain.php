@@ -3,13 +3,6 @@ declare(strict_types=1);
 
 namespace Falgun\Fountain;
 
-/**
- * This class has more usage
- * accept a config file and process it
- * services: is a array of service definition
- * shared: is flag for singleton classes
- * implementations: is an array of implementations of a interface
- */
 final class Fountain implements ContainerInterface
 {
 
