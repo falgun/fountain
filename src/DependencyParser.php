@@ -29,7 +29,7 @@ final class DependencyParser
 
         //is it instatiable ?
         if ($reflection->isInstantiable() === false) {
-            throw new \InvalidArgumentException('Cannot instantiate ' . $class);
+            throw UninstantiableException::fromClassName($class);
         }
 
         //check constructor
@@ -87,7 +87,26 @@ final class DependencyParser
             return $this->shared->get($name);
         }
 
-        return $this->resolve($name);
+        try {
+            return $this->resolve($name);
+        } catch (UninstantiableException $exception) {
+            return $this->tryFallbackToDefaultValue($parameter, $exception);
+        }
+    }
+
+    /**
+     * @param ReflectionParameter $parameter
+     * @param UninstantiableException $uninstantiableException
+     * @return mixed
+     * @throws UninstantiableException
+     */
+    private function tryFallbackToDefaultValue(ReflectionParameter $parameter, UninstantiableException $uninstantiableException)
+    {
+        try {
+            return $this->getDefaultValue($parameter);
+        } catch (\InvalidArgumentException $exception) {
+            throw UninstantiableException::fallbackToDefaultValueFailed($uninstantiableException, $exception);
+        }
     }
 
     /**
@@ -104,7 +123,7 @@ final class DependencyParser
         $declaringClassName = $this->getDeclaringClassName($parameter);
 
         throw new \InvalidArgumentException(<<<TEXT
-            No default value for \${$parameter->getName()} of {$declaringClassName} found!
+            No default value for \${$parameter->getName()} of {$declaringClassName}->__construct() found!
             TEXT);
     }
 

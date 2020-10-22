@@ -43,7 +43,10 @@ final class DefaultScalarTest extends TestCase
             $fountain->get(StubNoDefault::class);
             $this->fail();
         } catch (\InvalidArgumentException $ex) {
-            $this->assertSame('No default value for $noDefault of Falgun\Fountain\Tests\StubNoDefault found!', $ex->getMessage());
+            $this->assertSame(<<<TEXT
+                No default value for \$noDefault of Falgun\Fountain\Tests\StubNoDefault->__construct() found!
+                TEXT,
+                $ex->getMessage());
             $this->assertSame(0, $ex->getCode());
         }
     }

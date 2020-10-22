@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Falgun\Fountain\Fountain;
 use Falgun\Fountain\SharedContainer;
 use Falgun\Fountain\DependencyParser;
+use Falgun\Fountain\UninstantiableException;
 
 final class FountainTest extends TestCase
 {
@@ -21,6 +22,19 @@ final class FountainTest extends TestCase
         $this->assertInstanceOf(Stubs\DepA::class, $depA);
     }
 
+    public function testNonExistantClass()
+    {
+        $fountain = new Fountain();
+
+        try {
+            $fountain->get(ClassDoesNotExists::class);
+            $this->fail();
+        } catch (\ReflectionException $ex) {
+            $this->assertSame('Class Falgun\Fountain\Tests\ClassDoesNotExists does not exist', $ex->getMessage());
+            $this->assertSame(-1, $ex->getCode());
+        }
+    }
+
     public function testNonInstantiable()
     {
         $fountain = new Fountain();
@@ -28,9 +42,9 @@ final class FountainTest extends TestCase
         try {
             $fountain->get(Stubs\Interface1::class);
             $this->fail();
-        } catch (\InvalidArgumentException $ex) {
-            $this->assertSame('Cannot instantiate ' . Stubs\Interface1::class, $ex->getMessage());
-            $this->assertSame(0, $ex->getCode());
+        } catch (UninstantiableException $ex) {
+            $this->assertSame(Stubs\Interface1::class . ' is Uninstantiable!', $ex->getMessage());
+            $this->assertSame(500, $ex->getCode());
         }
     }
 
