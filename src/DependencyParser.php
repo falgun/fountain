@@ -11,10 +11,32 @@ final class DependencyParser
 {
 
     private SharedContainerInterface $shared;
+    private RuleBook $ruleBook;
 
-    public function __construct(SharedContainerInterface $shared)
+    public function __construct(SharedContainerInterface $shared, RuleBook $ruleBook)
     {
         $this->shared = $shared;
+        $this->ruleBook = $ruleBook;
+    }
+
+    /**
+     * @template T
+     * @param class-string<T> $class
+     * @return T
+     */
+    public function resolve(string $class)
+    {
+        if ($this->shared->has($class)) {
+            return $this->shared->get($class);
+        }
+
+        $resolved = $this->resolveClassWithReflection($class);
+
+        if ($this->ruleBook->isShareable($class)) {
+            $this->shared->set($class, $resolved);
+        }
+
+        return $resolved;
     }
 
     /**
@@ -23,7 +45,7 @@ final class DependencyParser
      * @return T
      * @throws \InvalidArgumentException
      */
-    public function resolve(string $class)
+    private function resolveClassWithReflection(string $class)
     {
         $reflection = new ReflectionClass($class);
 
@@ -82,10 +104,6 @@ final class DependencyParser
         }
 
         $name = $dependency->getName();
-
-        if ($this->shared->has($name)) {
-            return $this->shared->get($name);
-        }
 
         try {
             return $this->resolve($name);

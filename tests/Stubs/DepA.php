@@ -6,8 +6,8 @@ namespace Falgun\Fountain\Tests\Stubs;
 final class DepA
 {
 
-    private DepB $b;
-    private DepAB $ab;
+    public DepB $b;
+    public DepAB $ab;
 
 //    private Interface1 $c;
 

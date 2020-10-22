@@ -15,11 +15,13 @@ final class Fountain implements ContainerInterface
 
     private SharedContainerInterface $shared;
     private DependencyParser $parser;
+    private RuleBook $ruleBook;
 
-    public function __construct(SharedContainerInterface $shared = null)
+    public function __construct(SharedContainerInterface $shared = null, RuleBook $ruleBook = null)
     {
         $this->shared = $shared ?? new SharedContainer();
-        $this->parser = new DependencyParser($this->shared);
+        $this->ruleBook = $ruleBook ?? new RuleBook();
+        $this->parser = new DependencyParser($this->shared, $this->ruleBook);
     }
 
     /**
@@ -29,10 +31,6 @@ final class Fountain implements ContainerInterface
      */
     public function get(string $id)
     {
-        if ($this->shared->has($id)) {
-            return $this->shared->get($id);
-        }
-
         return $this->parser->resolve($id);
     }
 

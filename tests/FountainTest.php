@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace Falgun\Fountain\Tests;
 
-use PHPUnit\Framework\TestCase;
+use Falgun\Fountain\RuleBook;
 use Falgun\Fountain\Fountain;
+use PHPUnit\Framework\TestCase;
 use Falgun\Fountain\SharedContainer;
 use Falgun\Fountain\DependencyParser;
 use Falgun\Fountain\UninstantiableException;
@@ -51,7 +52,7 @@ final class FountainTest extends TestCase
     public function testClassWithoutDependency()
     {
         $share = new SharedContainer();
-        $parser = new DependencyParser($share);
+        $parser = new DependencyParser($share, new RuleBook);
 
         $obj = $parser->resolve(ClassWithoutDependency::class);
 
@@ -61,7 +62,7 @@ final class FountainTest extends TestCase
     public function testClassWithoutCtor()
     {
         $share = new SharedContainer();
-        $parser = new DependencyParser($share);
+        $parser = new DependencyParser($share, new RuleBook);
 
         $obj = $parser->resolve(ClassWithoutCtor::class);
 

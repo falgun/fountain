@@ -6,7 +6,7 @@ namespace Falgun\Fountain\Tests\Stubs;
 final class DepB
 {
 
-    private DepAB $ab;
+    public DepAB $ab;
 
     public function __construct(DepAB $ab)
     {
