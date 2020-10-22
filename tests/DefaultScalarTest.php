@@ -5,7 +5,6 @@ namespace Falgun\Fountain\Tests;
 
 use Falgun\Fountain\Fountain;
 use PHPUnit\Framework\TestCase;
-use Falgun\Fountain\SharedContainer;
 
 final class DefaultScalarTest extends TestCase
 {
@@ -44,7 +43,7 @@ final class DefaultScalarTest extends TestCase
             $fountain->get(StubNoDefault::class);
             $this->fail();
         } catch (\InvalidArgumentException $ex) {
-            $this->assertSame('No default value for noDefault found !', $ex->getMessage());
+            $this->assertSame('No default value for $noDefault of Falgun\Fountain\Tests\StubNoDefault found!', $ex->getMessage());
             $this->assertSame(0, $ex->getCode());
         }
     }

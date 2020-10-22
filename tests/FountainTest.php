@@ -21,7 +21,7 @@ final class FountainTest extends TestCase
         $this->assertInstanceOf(Stubs\DepA::class, $depA);
     }
 
-    public function testNonInstaciable()
+    public function testNonInstantiable()
     {
         $fountain = new Fountain();
 
@@ -36,7 +36,8 @@ final class FountainTest extends TestCase
 
     public function testClassWithoutDependency()
     {
-        $parser = new DependencyParser();
+        $share = new SharedContainer();
+        $parser = new DependencyParser($share);
 
         $obj = $parser->resolve(ClassWithoutDependency::class);
 
@@ -45,7 +46,8 @@ final class FountainTest extends TestCase
 
     public function testClassWithoutCtor()
     {
-        $parser = new DependencyParser();
+        $share = new SharedContainer();
+        $parser = new DependencyParser($share);
 
         $obj = $parser->resolve(ClassWithoutCtor::class);
 

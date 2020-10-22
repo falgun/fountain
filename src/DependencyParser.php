@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Falgun\Fountain;
 
 use ReflectionClass;
+use ReflectionMethod;
 use ReflectionParameter;
 
 final class DependencyParser
@@ -24,29 +25,29 @@ final class DependencyParser
      */
     public function resolve(string $class)
     {
-        $reflector = new ReflectionClass($class);
+        $reflection = new ReflectionClass($class);
 
         //is it instatiable ?
-        if ($reflector->isInstantiable() === false) {
+        if ($reflection->isInstantiable() === false) {
             throw new \InvalidArgumentException('Cannot instantiate ' . $class);
         }
 
         //check constructor
-        $constructor = $reflector->getConstructor();
+        $constructor = $reflection->getConstructor();
 
-        if ($constructor !== null) {
-            //Get constructor parameter and its dependencies
-
-            $parameters = $constructor->getParameters();
-            $dependencies = $this->getDependencies($parameters);
-        } else {
-            $dependencies = [];
+        if ($constructor === null) {
+            return $reflection->newInstanceWithoutConstructor();
         }
 
-        //instantiate class
-        $classInstance = $reflector->newInstanceArgs($dependencies);
+        $dependencies = $this->getConstructorDependencies($constructor);
 
-        return $classInstance;
+        return $reflection->newInstanceArgs($dependencies);
+    }
+
+    private function getConstructorDependencies(ReflectionMethod $constructor): array
+    {
+        $parameters = $constructor->getParameters();
+        return $this->getDependencies($parameters);
     }
 
     /**
@@ -100,7 +101,21 @@ final class DependencyParser
             return $parameter->getDefaultValue();
         }
 
-        //return null;
-        throw new \InvalidArgumentException('No default value for ' . $parameter->getName() . ' found !');
+        $declaringClassName = $this->getDeclaringClassName($parameter);
+
+        throw new \InvalidArgumentException(<<<TEXT
+            No default value for \${$parameter->getName()} of {$declaringClassName} found!
+            TEXT);
+    }
+
+    private function getDeclaringClassName(ReflectionParameter $parameter): string
+    {
+        $declaringClass = $parameter->getDeclaringClass();
+
+        if ($declaringClass instanceof ReflectionClass) {
+            return $declaringClass->getName();
+        }
+
+        return 'Unknown';
     }
 }
