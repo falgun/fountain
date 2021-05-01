@@ -78,7 +78,7 @@ final class DependencyParser
 
     /**
      * @param array<int, ReflectionParameter> $parameters
-     * @return array<int, object>
+     * @return array<int, mixed>
      */
     private function getDependencies(array $parameters): array
     {
@@ -97,11 +97,15 @@ final class DependencyParser
 
     /**
      * @param ReflectionParameter $parameter
-     * @return object
+     * @return mixed
+     *
+     * @psalm-suppress UndefinedMethod
      */
     private function prepareDependency(ReflectionParameter $parameter)
     {
-        $dependency = $parameter->getClass();
+        $dependency = ($parameter->getType() && $parameter->getType()->isBuiltin() === false)
+                        ? new ReflectionClass($parameter->getType()->getName())
+                        : null;
 
         if ($dependency === null) {
             return $this->getDefaultValue($parameter);

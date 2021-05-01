@@ -31,7 +31,7 @@ final class FountainTest extends TestCase
             $fountain->get(ClassDoesNotExists::class);
             $this->fail();
         } catch (\ReflectionException $ex) {
-            $this->assertSame('Class Falgun\Fountain\Tests\ClassDoesNotExists does not exist', $ex->getMessage());
+            $this->assertSame('Class "Falgun\Fountain\Tests\ClassDoesNotExists" does not exist', $ex->getMessage());
             $this->assertSame(-1, $ex->getCode());
         }
     }
